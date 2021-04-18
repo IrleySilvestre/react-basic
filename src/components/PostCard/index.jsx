@@ -1,3 +1,5 @@
+import './styles.css'
+
 import React from "react"
 
 export const PostCard = (props)=>{
@@ -6,7 +8,7 @@ export const PostCard = (props)=>{
             <img src={props.cover} alt={props.title}/>
 
             <div className="post-content">
-                <h1>{props.title}</h1>
+                <h2>{props.title}</h2>
                 <p>{props.body}</p>
             </div>
 
