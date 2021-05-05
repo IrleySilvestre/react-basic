@@ -8,6 +8,7 @@ import {MyButton} from "../Button";
 
 class Index extends Component {
     state = {
+        searchValue: '',
         posts: [],
         allPosts: [],
         page: 0,
@@ -30,7 +31,7 @@ class Index extends Component {
 
     }
 
-    loadMorePosts = ()=>{
+    loadMorePosts = () => {
         const {
             page,
             postsPerPage,
@@ -40,30 +41,54 @@ class Index extends Component {
         const nextPage = page + postsPerPage
         const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage)
         posts.push(...nextPosts)
-        this.setState({posts , page: nextPage})
+        this.setState({posts, page: nextPage})
+    }
+
+    heandleChange = (e) => {
+        e.preventDefault()
+        const {value} = e.target
+        this.setState({searchValue: value})
     }
 
     render() {
-        const {posts, page, postsPerPage, allPosts} = this.state
+        const {posts, page, postsPerPage, allPosts, searchValue} = this.state
         var texto = ''
         const noMorePosts = page + postsPerPage >= allPosts.length
-        if (noMorePosts){
-            texto = 'Fim'
-        }else {
-
-            texto = 'Mais Posts'
-        }
-
+        noMorePosts ? texto = 'Fim' : texto = 'Mais Posts'
+        const findPosts = !!searchValue ?
+            allPosts.filter(post => {
+                return post.title.toLowerCase().includes(searchValue.toLowerCase())
+            })
+            : posts
         return (
-            <section className="container">
-                <Posts posts={posts}/>
-                <MyButton
-                    text={texto}
-                    onClick={this.loadMorePosts}
-                    disabled = {noMorePosts}
-                />
+            <>
 
-            </section>
+                <section className="container">
+                    {!!searchValue && (
+                        <h2 className="mb-2">Search Value: {searchValue}</h2>
+                    )}
+                    <input
+                        className="mb-3"
+                        onChange={this.heandleChange}
+                        value={searchValue}
+                        type="search"
+                    />
+                    {findPosts.length > 0 ?
+                        <Posts posts={findPosts}/> :
+                        <p> Post não encontrado =(</p>}
+
+
+                    {!searchValue && (
+                        <MyButton
+                            text={texto}
+                            onClick={this.loadMorePosts}
+                            disabled={noMorePosts}
+                        />
+                    )
+                    }
+
+                </section>
+            </>
         )
     }
 }
